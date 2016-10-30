@@ -6,46 +6,36 @@ int CheckOper(const char * oper, const char * cmd)
 	return 0;
 }			            
 
-#define IF_SPACE if ( txt[j] == ' ' ) continue;
-
-int LineAnalyse(int * arr, const char * txt, int line)
+int LineAnalyse(int * arr, const char * txt, int line, const char * _FILE_)
 {
 	int TxtLen = strlen(txt), cmd_count = 0;
 	bool FstSpc = true, CmdDefined = false;
 	char * cmd = NULL;
 
 	int SpcPos = DetCmd(&cmd, txt);
+	printf("cmd = %s\n", cmd);
 
 	int MaxOperCnt = 0, OperCnt = 0;
 
 	if (!(CmdDefined = DefCmd(arr, &MaxOperCnt, cmd)))
-	{
-		printf("No such command: \"%s\" in line %d\n", cmd, line);
-		abort();
-	}
+		ERROR(_FILE_, line + 1, "no such command %s\n", cmd);
 
 	char * oper = (char *)calloc(MAXOPER, sizeof(*oper));
 	int opcount = 0;
 
 	for (int j = SpcPos; j < TxtLen; j++)
 	{
-		IF_SPACE
-			if (txt[j] != ',')
-			{
-				oper[opcount++] = txt[j];
-			}
+		if (txt[j] != ',')
+		{
+			oper[opcount++] = txt[j];
+		}
 		if (txt[j] != ',' && j == TxtLen - 1 || txt[j] == ',')
 		{
 			if (OperCnt + 1 > MaxOperCnt)
-			{
-				printf("Too much opernads in \"%s\" in line %d\n", cmd, line); // add line
-				abort();
-			}
+				ERROR(_FILE_, line + 1, "too much opends in command \"%s\"", cmd);
 			oper[opcount] = '\0';
 			if (CheckOper(oper, cmd) < 0)
-			{
-				printf("Operand \"%s\" is not valid in line %d\n", oper, line);
-			}
+				ERROR(_FILE_, line + 1, "Operand \"%s\" is not valid", oper);
 			arr[++OperCnt] = atoi(oper);
 			opcount = 0;
 		}
