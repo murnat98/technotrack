@@ -40,7 +40,7 @@ int DivideStrs ( char ** arr, const char * s, int lines, int slen )
 #else
 	#define $ continue;
 #endif // DEBUG
-int WriteObj ( const char * text, long _size )
+int WriteObj ( const char * text, long _size, const char * _FILE_ )
 {
     const char OBJFILE[10] = "a.obj";
     FILE * obj = fopen ( OBJFILE, "wb" );
@@ -56,7 +56,7 @@ int WriteObj ( const char * text, long _size )
 
 	for ( int i = 0; i < nLines; i++ )
     {
-        _count = LineAnalyse ( WriteArr, lines[i], i );
+        _count = LineAnalyse ( WriteArr, lines[i], i, _FILE_ );
 
 		for ( int j = 0; j < _count; j++ )
 		{

@@ -2,6 +2,7 @@
 
 int main()
 {
+	setlocale(LC_ALL, "Russian");
     char * AsmTxt = NULL;
     char * FName = NULL;
 
@@ -14,7 +15,7 @@ int main()
         _size = ReadAsm ( FName, &AsmTxt );
     }
 
-    WriteObj ( AsmTxt, _size );
+    WriteObj ( AsmTxt, _size, FName );
 
     free ( AsmTxt );
     free ( FName );

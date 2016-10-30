@@ -3,6 +3,7 @@
 
 //!============DEFINES============
 #define _CRT_SECURE_NO_WARNINGS
+#define ERROR(file, line, ...) {printf ( "In %s in line %d: %s syntax error: ", file, line ); printf ( __VA_ARGS__ ); system ( "pause" ); abort();}
 
 //!============INCLUDES===========
 #include <stdio.h>
@@ -10,6 +11,7 @@
 #include <assert.h>
 #include <string.h>
 #include <io.h>
+#include <locale.h>
 #include "read.h"
 #include "write.h"
 #include "analyse.h"
@@ -27,6 +29,6 @@ enum cmds
 
 //!============FUNCTIONS===========
 int    ReadAsm(char *, char **);
-int    WriteObj(const char *, long);
+int    WriteObj(const char *, long, const char *);
 
 #endif // MAIN_H_INCLUDED

@@ -4,6 +4,6 @@
 //!============FUNCTIONS===========
 int    CountStr(char *, int);
 int    DivideStrs(char **, const char *, int, int);
-int    LineAnalyse(int *, const char *, int);
+int    LineAnalyse(int *, const char *, int, const char *);
 
 #endif
