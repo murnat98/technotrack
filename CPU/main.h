@@ -21,6 +21,8 @@
 #include "Stack.h"
 #include "cpu.h"
 
+
+//! TODO: from this moment -> to .cpp
 //!============FUNCTIONS============
 int execute();
 

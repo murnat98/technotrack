@@ -5,9 +5,10 @@ int CountStr ( char * s, int len )
 	char EndOfStr = '\n';
 	char * point;
 	int _count = 1;
+
 	while ( ( point = strrchr ( s, EndOfStr ) ) )
 	{
-		* point = '\0';
+		*point = '\0';
 		_count++;
 	}
 	return _count;
@@ -39,6 +40,8 @@ int DivideStrs ( char ** arr, const char * s, int lines, int slen )
 #else
 	#define $ continue;
 #endif // DEBUG
+
+//! TODO: divide functions
 int WriteObj ( const char * text, long _size )
 {
     const char OBJFILE[10] = "a.obj";
@@ -52,6 +55,7 @@ int WriteObj ( const char * text, long _size )
 	int _count = 0;
 	int * WriteArr = ( int * ) calloc ( MAXOPER, sizeof ( * WriteArr ) );
 
+//! TODO: make 1 function Pass()
 	FirstPass((const char **)lines, nLines);
 	LastPass(WriteArr, (const char **)lines, nLines, obj);
 
@@ -69,7 +73,7 @@ int FirstPass(const char ** lines, int nLines)
 	int nLabels = 0, WordsCounter = 0;
 	bool LabelFound = false;
 	char * label = (char *)calloc(MAXLABEL, sizeof(*label));
-	
+
 	for (int i = 0; i < nLines; i++)
 	{
 		LabelFound = FindLabels(lines[i], label, i);
@@ -121,6 +125,7 @@ bool FindLabels(const char * str, char * label, int line)
 	char * cstr = (char *)calloc(strlen(str) + 1, sizeof(*cstr));
 	strcpy(cstr, str);
 
+//! TODO: use sscanf()
 	if (strpbrk(cstr, ":"))
 	{
 		strtok(cstr, ":");

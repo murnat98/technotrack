@@ -47,6 +47,7 @@ int check_jmp(const char * arg, int line )
 	return 0;
 }
 
+//! TODO: pop to reg
 int check_pop (const char * arg, int line) { return 0; }
 int check_add (const char * arg, int line) { return 0; }
 int check_mul (const char * arg, int line) { return 0; }

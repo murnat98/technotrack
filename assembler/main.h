@@ -2,6 +2,7 @@
 #define MAIN_H_INCLUDED
 
 //!============DEFINES============
+//! TODO: remove _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #define NDEBUG
 //#define DEBUG
@@ -32,6 +33,8 @@ const int MAXCMD   = 50;
 const int MAXOPER  = 50;
 const int MAXLABEL = 255;
 const int MAXLABELSINTEXT = 1000;
+
+//! TODO: replace into own file
 enum cmds
 {
 	#define DEFCMD( name, num, ... ) cmd_##name = num,
@@ -41,6 +44,7 @@ enum cmds
 };
 
 //!============TYPES===============
+//! TODO: replace into file with labels
 typedef struct lbl
 {
 	int ptr;
@@ -49,10 +53,12 @@ typedef struct lbl
 } Label_t;
 
 //!========GLOBAL_VARS=============
+//! TODO: to main
 extern Label_t * AllLabels;
 extern char _FILE_[FILENAME_MAX];
 
 //!============FUNCTIONS===========
+//! TODO: to main
 int       ReadAsm      (char *, char **);
 int       WriteObj     (const char *, long);
 Label_t * Label_new    (size_t, size_t);

@@ -2,6 +2,7 @@
 
 char * GetFName ()
 {
+  //! TODO: contract programming
     const int MAXFNAME = 256;
     char * FName = ( char * ) calloc ( MAXFNAME, sizeof ( * FName ) );
 
@@ -11,6 +12,7 @@ char * GetFName ()
     return FName;
 }
 
+//! TODO: GNU codestyle
 int ReadAsm ( char * FName, char ** ReadTxt )
 {
     FILE * masm = fopen ( FName, "r" );

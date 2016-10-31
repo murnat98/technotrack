@@ -32,6 +32,7 @@ typedef struct CPU
 int cpu_##name ( cpu_t *, int *, int );
 #include "cmds.h"
 #undef DEFCMD
+
 int  cpu_ctor (cpu_t *);
 int  cpu_dtor (cpu_t *);
 bool cpu_OK   (const cpu_t *);

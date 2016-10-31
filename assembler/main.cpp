@@ -6,9 +6,11 @@ char _FILE_[FILENAME_MAX] = "";
 int main()
 {
 	setlocale(LC_ALL, "Russian");
+
     char * AsmTxt = NULL;
     char * FName = NULL;
-	AllLabels = Label_new(MAXLABELSINTEXT, MAXLABEL);
+
+	AllLabels = Label_new(MAXLABELCOUNT, MAXLABELSIZE);
 
     FName = GetFName ();
 
@@ -20,6 +22,7 @@ int main()
     }
 	strcpy(_FILE_, FName);
 
+	//! TODO: divide this on 2 functions.
     WriteObj ( AsmTxt, _size );
 	printf("Build Ok!\n");
 
@@ -28,8 +31,7 @@ int main()
 
 	Label_delete(AllLabels);
 
-	system ( "pause" ); 
+	system ( "pause" );
 
     return 0;
 }
-

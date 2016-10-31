@@ -2,6 +2,8 @@
 
 int cpu_ctor(cpu_t * This)
 {
+	//! TODO: int ret = Stack_ctor ();
+	//!       assert (ret != -1);
 	assert(!Stack_ctor(&This->stk, STACK_SIZE));
 
 	return 0;
@@ -39,7 +41,7 @@ int cpu_push(cpu_t * This, int * args, int size)
 	return 0;
 }
 
-int cpu_pop(cpu_t * This, int * args, int size) 
+int cpu_pop(cpu_t * This, int * args, int size)
 {
 	ASSERTCPU(This);
 	SIZECONTROL(0, cpu_pop);
@@ -50,8 +52,8 @@ int cpu_pop(cpu_t * This, int * args, int size)
 
 	return ret;
 }
-int cpu_add(cpu_t * This, int * args, int size) 
-{ 
+int cpu_add(cpu_t * This, int * args, int size)
+{
 	ASSERTCPU(This);
 	SIZECONTROL(0, cpu_add);
 
@@ -65,7 +67,7 @@ int cpu_add(cpu_t * This, int * args, int size)
 
 	return 0;
 }
-int cpu_mul(cpu_t * This, int * args, int size) 
+int cpu_mul(cpu_t * This, int * args, int size)
 {
 	ASSERTCPU(This);
 	SIZECONTROL(0, cpu_add);
@@ -78,10 +80,10 @@ int cpu_mul(cpu_t * This, int * args, int size)
 
 	ASSERTCPU(This);
 
-	return 0; 
+	return 0;
 }
 int cpu_sub(cpu_t * This, int * args, int size)
-{ 
+{
 	ASSERTCPU(This);
 	SIZECONTROL(0, cpu_add);
 
@@ -93,11 +95,11 @@ int cpu_sub(cpu_t * This, int * args, int size)
 
 	ASSERTCPU(This);
 
-	return 0; 
+	return 0;
 }
 
-int cpu_out(cpu_t * This, int * args, int size) 
-{ 
+int cpu_out(cpu_t * This, int * args, int size)
+{
 	ASSERTCPU(This);
 	SIZECONTROL(0, cpu_out);
 
@@ -105,17 +107,18 @@ int cpu_out(cpu_t * This, int * args, int size)
 
 	ASSERTCPU(This);
 
-	return 0; 
+	return 0;
 }
 
 int cpu_jmp(cpu_t * This, int * args, int size) { return 0; } // Not realized yet
 
-int cpu_exit(cpu_t * This, int * args, int size) 
-{ 
+int cpu_exit(cpu_t * This, int * args, int size)
+{
 	ASSERTCPU(This);
 	SIZECONTROL(0, cpu_exit);
 
+	//! remove this
 	system("pause");
 
-	return 0; 
+	return 0;
 }

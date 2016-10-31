@@ -13,10 +13,14 @@ int execute()
 	for (long pc = PROGSTART; pc < size; pc += offset + 1)
 	{
 		offset = DefOffset(ram[pc]);
+
+
+		///! TODO: optimize offset
 		switch (ram[pc])
 		{
 			#define DEFCMD( name, num, PC )								 \
 		case num:														 \
+		//! TODO: cp & CP ?!?!?!
 			cpu_##name ( &Cpu, ram + pc + PC, offset );		   			 \
 			break;
 			#include "cmds.h"
@@ -25,6 +29,7 @@ int execute()
 			fprintf(stderr, "Cannot define the command. Please contact to developers!\n");
 			abort();
 		}
+
 		_cpu_dump(&Cpu);
 	}
 
@@ -58,6 +63,7 @@ long ReadFile(int ** arr)
 
 	long size = _filelength(_fileno(exe)) / sizeof(int);
 	*arr = (int *)calloc(size, sizeof(*arr));
+	
 	if (fread(*arr, sizeof(int *), size, exe) != size)
 	{
 		printf("Cannot read from exe file!\nTry one more time\n");

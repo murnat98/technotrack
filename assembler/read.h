@@ -2,7 +2,8 @@
 #define READ_H_INCLUDED
 
 //!============FUNCTIONS===========
-int    ReadAsm  (char *, char **);
+//! TODO: doc function's protype
+int    ReadAsm  (char * fileName, char **);
 char * GetFName ();
 
 #endif
