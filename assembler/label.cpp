@@ -9,14 +9,21 @@ Label_t * Label_new(size_t ThisSize, size_t NameSize)
 		strcpy(This[i].name, CHAR_POISON);
 		This[i].ptr = DATA_POISON;
 	}
+	This->LabelSize = ThisSize;
 
 	return This;
 }
 
 int Label_delete(Label_t * This)
 {
-	free(This->name);
+	for (int i = 0; i < This->LabelSize; i++)
+	{
+		free(This[i].name);
+		This[i].name = NULL;
+		This[i].ptr  = DATA_POISON;
+	}
 	free(This);
+	This = NULL;
 
 	return 0;
 }

@@ -5,6 +5,7 @@
 typedef struct lbl
 {
 	int ptr;
+	int LabelSize;
 	char * name;
 } Label_t;
 
