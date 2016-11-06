@@ -1,126 +1,101 @@
-#include "main.h"
+#include "include.h"
 
-int CheckOper(const char * oper, const char * cmd, int line)
+int assemble(char * Asm, int ** arr, long size)
 {
-	#define DEFCMD( name, num, OperCnt)    \
-	if ( !_stricmp ( cmd, #name ) )        \
-		return check_##name ( oper, line );           
-	#include "cmds.h"	
-	#undef DEFCMD
+	int ArrSize = 0;
+	*arr = (int *)calloc(size, sizeof(int));
 
-	return -1; //! Command not found
-}		
+	int nLines = CountStr(Asm, size);
+	char ** lines = (char **)calloc(nLines * 2, sizeof(char *));
+	DivideStrs(lines, Asm, nLines, size);
 
-int LineAnalyse(int * arr, const char * txt, int line)
+	Stack_t labels = {};
+	Stack_ctor(&labels, MAXLABELCOUNT);
+
+	ArrSize = pass((const char **)lines, *arr, nLines, &labels);
+	ArrSize = pass((const char **)lines, *arr, nLines, &labels);
+
+	Stack_dtor(&labels);
+
+	return ArrSize;
+}
+
+int pass(const char ** lines, int * arr, int nLines, Stack_t * labels)
 {
-	int TxtLen = strlen(txt);
-	bool FstSpc = true, CmdDefined = false, brk = false;
-	char * cmd = NULL;
+	int pc = 0, MaxOperCnt = 0, OperCnt = 0;
+	bool CmdDefined = false, LblDefined = false;
+	char * word     = NULL;
+	char * cmd      = (char *)calloc(MAXCMD, sizeof(char));
+	char * cpylines = (char *)calloc(MAXCMD, sizeof(char));
 
-	int SpcPos = DetCmd(&cmd, txt);
-	int len = strlen(cmd) - 1;
-	PRINTF("------%d\n", strlen ( txt ) );
-	if (cmd[len] == ':') //! ignoring labels
+	for (int i = 0; i < nLines; i++)
 	{
-		free(cmd);
-		cmd = NULL;
-		if (len + 2 <= strlen(txt))
-			SpcPos += DetCmd(&cmd, txt + len + 2) + 1;
-		else
-			return 0;
-	}
-	PRINTF("cmd = %s, lines[i] = %s\n", cmd, txt);
+		CmdDefined = false;
+		LblDefined = false;
+		OperCnt    = 0;
+		cmd[0]     = '\0';
 
-	int MaxOperCnt = 0, OperCnt = 0;
+		strcpy(cpylines, lines[i]);
+		word = strtok(cpylines, " \t");
 
-	if (!(CmdDefined = DefCmd(arr, &MaxOperCnt, cmd)))
-		ERROR(_FILE_, line + 1, "no such command \"%s\"\n", cmd)
-
-	char * oper = (char *)calloc(MAXOPER, sizeof(*oper));
-	int opcount = 0, arg = 0;
-
-	for (int j = SpcPos; j < TxtLen; j++)
-	{
-		if (txt[j] == ';')
+		while (word)
 		{
-			brk = true;
+			if (word[0] == ';')
+				break;
+			LblDefined = DefLbl((const char *)word, CmdDefined, strlen(word), labels, pc, i);
+			if (LblDefined)
+			{
+				word = strtok(NULL, " \t");
+				continue;
+			}
+
+			ArrWriter(arr, word, pc, cmd, &OperCnt, &MaxOperCnt, &CmdDefined, i, labels);
+
+			pc++;
+			word = strtok(NULL, " \t");
 		}
-
-		if (txt[j] != ',' && txt[j] != ' ')
-		{
-			oper[opcount++] = txt[j];
-		}
-		if ((txt[j] != ',' && j == TxtLen - 1 || txt[j] == ',') || brk)
-		{
-			if (OperCnt + 1 > MaxOperCnt)
-				ERROR(_FILE_, line + 1, "too much arguments in command \"%s\"", cmd)
-			oper[opcount] = '\0';
-
-			arg = CheckOper(oper, cmd, line);
-
-			if (arg < 0)
-				ERROR(_FILE_, line + 1, "argument \"%s\" is not valid", oper)
-			else
-				arr[++OperCnt] = arg;
-			opcount = 0;
-		}
-
-		if (brk)
-			break;
 	}
 
-	free(oper);
+	free(cpylines);
 	free(cmd);
 
-	return OperCnt + 1;
+	return pc;
 }
 
-int DetCmd(char ** cmd, const char * txt)
+int ArrWriter(int * arr, const char * word, int pc, char * cmd, int * OperCnt, int * MaxOperCnt, bool * CmdDefined, int line, Stack_t * labels)
 {
-	bool FstSpc = true, CmdDetected = false;
-	int _count = 0, i = 0;
-	int FstLetter = DeleteSpcs(txt);
-	i += FstLetter;
-
-	*cmd = (char *)calloc(MAXCMD, sizeof(char));
-
-	while (txt[i] != ' ' && txt[i] != '\0')
+	if (!*CmdDefined) // Define command
 	{
-		switch (txt[i])
+		*CmdDefined = DefCmd(arr, MaxOperCnt, word, pc);
+		if (*CmdDefined)
+			strcpy(cmd, word);
+		else
 		{
-		case ' ':
-			if (FstSpc)
-			{
-				cmd[0][_count] = '\0';
-				FstSpc = false;
-			}
-			CmdDetected = true;
-			break;
-
-		default:
-			if (FstSpc)
-			{
-				cmd[0][_count++] = txt[i];
-			}
+			ERROR(_FILE_, line + 1, "arguments must be after command!\n");
 		}
+	}
+	else // Define arguments
+	{
+		*OperCnt++;
+		if (*MaxOperCnt < *OperCnt)
+			ERROR(_FILE_, line + 1, "command \"%s\" must have %d arguments\n", cmd, *MaxOperCnt);
 
-		i++;
+		arr[pc] = CheckArgs(cmd, word, line, labels);
+		if (arr[pc] == -2)
+			assert(!"arr[pc] == -2 in CheckArgs!!!!\n");
 	}
 
-	if (!CmdDetected)
-		cmd[0][_count] = '\0';
-
-	return i;
+	return 0;
 }
 
-bool DefCmd(int * arr, int * MaxOperCnt, const char * cmd)
+bool DefCmd(int * arr, int * MaxOperCnt, const char * cmd, int pc)
 {
 	bool CmdDefined = false;
 
 	#define DEFCMD( name, num, Oper_Cnt )  \
 	if ( !_stricmp ( cmd, #name ) )        \
 	{				                       \
-		arr[0] = cmd_##name;               \
+		arr[pc] = cmd_##name;              \
 		*MaxOperCnt = Oper_Cnt;	           \
 		CmdDefined = true;                 \
 	}	
@@ -130,17 +105,77 @@ bool DefCmd(int * arr, int * MaxOperCnt, const char * cmd)
 	return CmdDefined;
 }
 
-int DeleteSpcs(const char * str)
+bool DefLbl(const char * word, bool CmdDefined, int len, Stack_t * labels, int pc, int line)
 {
-	int offset = 0;
-
-	for (int i = 0; i < strlen(str); i++)
+	if (CmdDefined && word[len - 1] == ':')
 	{
-		if (str[i] == ' ' || str[i] == '\t')
-			offset++;
-		else
-			break;
+		ERROR(_FILE_, line + 1, "Label must be before command not argument!\n");
+	
+		return false;
 	}
 
-	return offset;
+	if (word[len - 1] == ':')
+	{
+		Label_t push = {};
+		push.name = (char *)calloc(MAXLABELSIZE, sizeof(char));
+		strcpy(push.name, word);
+		push.name[len - 1] = '\0';
+		push.ptr = pc;
+
+		Stack_push(labels, push);
+
+		free(push.name);
+
+		return true;
+	}
+
+	return false;
+}
+
+int CheckArgs(const char * cmd, const char * arg, int line, Stack_t * labels)
+{
+	#define DEFCMD( name, num, args )	 \
+	if ( !_stricmp ( cmd, #name ) )		 \
+		return check_##name ( arg, line, labels );
+
+	#include "cmds.h"
+
+	return -2;
+
+	#undef DEFCMD
+}
+
+int CountStr(char * s, int len)
+{
+	char EndOfStr = '\n';
+	char * point;
+	int _count = 1;
+
+	while ((point = strrchr(s, EndOfStr)))
+	{
+		*point = '\0';
+		_count++;
+	}
+	return _count;
+}
+
+int DivideStrs(char ** arr, const char * s, int lines, int slen)
+{
+	bool _assign = false;
+	int ArrLen = 0, ArrCount = 0, pos = 0;
+	for (int i = 0; i < slen; i++)
+	{
+		if (s[i] == '\0')
+		{
+			_assign = true;
+		}
+		if (_assign)
+		{
+			arr[ArrCount] = (char *)s + pos;
+			pos = i + 1;
+			_assign = false;
+			ArrCount++;
+		}
+	}
+	return 0;
 }
