@@ -1,40 +1,27 @@
-#include "main.h"
+#include "include.h"
 
-int execute()
+int execute(const int * prg, cpu_t * _cpu, long size)
 {
-	int * ram = NULL;
-	long size = 0;
-	assert((size = ReadFile(&ram)) >= 0);
-
-	cpu_t Cpu = {};
-	cpu_ctor(&Cpu);
-
 	int offset = 0;
-	for (long pc = PROGSTART; pc < size; pc += offset + 1)
+	for (_cpu->pc = PROGSTART; _cpu->pc < size; _cpu->pc += offset + 1)
 	{
-		offset = DefOffset(ram[pc]);
-
-
-		///! TODO: optimize offset
-		switch (ram[pc])
+		_cpu_dump(_cpu);
+		offset = DefOffset(prg[_cpu->pc]);
+		switch (prg[_cpu->pc])
 		{
-			#define DEFCMD( name, num, PC )								 \
-		case num:														 \
-		//! TODO: cp & CP ?!?!?!
-			cpu_##name ( &Cpu, ram + pc + PC, offset );		   			 \
+		#define DEFCMD( name, num, args )														 \
+		case num:																				 \
+			offset = cpu_##name ( _cpu, prg + _cpu->pc + args, offset );	   					 \
 			break;
+
 			#include "cmds.h"
+
 			#undef DEFCMD
 		default:
-			fprintf(stderr, "Cannot define the command. Please contact to developers!\n");
+			fprintf(stderr, "Cannot define the command. Please, contact to developers!\n");
 			abort();
 		}
-
-		_cpu_dump(&Cpu);
 	}
-
-	cpu_dtor(&Cpu);
-	free(ram);
 
 	return 0;
 }
@@ -50,27 +37,10 @@ int DefOffset(int CmdNum)
 
 	if (ret == -1)
 	{
-		PRINTF("Cannot define program counter!\b");
+		PRINTF("Cannot define program counter!\n");
+		printf("Something went wrong!!\nContact with developers\n");
 		abort();
 	}
 
 	return ret;
-}
-
-long ReadFile(int ** arr)
-{
-	FILE * exe = fopen(EXENAME, "rb");
-
-	long size = _filelength(_fileno(exe)) / sizeof(int);
-	*arr = (int *)calloc(size, sizeof(*arr));
-	
-	if (fread(*arr, sizeof(int *), size, exe) != size)
-	{
-		printf("Cannot read from exe file!\nTry one more time\n");
-		return -1;
-	}
-
-	fclose(exe);
-
-	return size;
 }

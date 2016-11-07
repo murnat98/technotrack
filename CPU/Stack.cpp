@@ -1,4 +1,4 @@
-#include "main.h"
+#include "include.h"
 
 int Stack_ctor ( Stack_t * This, size_t size )
 {
@@ -68,7 +68,6 @@ bool Stack_OK ( const Stack_t * This )
 	       This -> count <= This -> max_elem;
 }
 
-const char DUMPFILENAM[] = "stack.dump";
 int Stack_dump ( const Stack_t * This, const char * VarName )
 {
 	char ok_txt[10];
@@ -139,6 +138,17 @@ type Stack_pop ( Stack_t * This )
 	This -> data[This -> count] = DATA_POISON;
 
 	ASSERT ( This );
+
+	return ret;
+}
+
+type Stack_get(const Stack_t * This)
+{
+	ASSERT(This);
+
+	int ret = This->data[This->count - 1];
+
+	ASSERT(This);
 
 	return ret;
 }
