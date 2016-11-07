@@ -150,7 +150,7 @@ type Stack_pop ( Stack_t * This )
 	return ret;
 }
 
-int Stack_find(Stack_t * This, const char * LblName)
+int Stack_find(const Stack_t * This, const char * LblName)
 {
 	ASSERT(This);
 

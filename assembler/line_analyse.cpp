@@ -70,9 +70,7 @@ int ArrWriter(int * arr, const char * word, int pc, char * cmd, int * OperCnt, i
 		if (*CmdDefined)
 			strcpy(cmd, word);
 		else
-		{
 			ERROR(_FILE_, line + 1, "arguments must be after command!\n");
-		}
 	}
 	else // Define arguments
 	{
@@ -134,15 +132,15 @@ bool DefLbl(const char * word, bool CmdDefined, int len, Stack_t * labels, int p
 
 int CheckArgs(const char * cmd, const char * arg, int line, Stack_t * labels)
 {
-	#define DEFCMD( name, num, args )	 \
-	if ( !_stricmp ( cmd, #name ) )		 \
+	#define DEFCMD( name, num, args )						 \
+	if ( !_stricmp ( cmd, #name ) )					    	 \
 		return check_##name ( arg, line, labels );
 
 	#include "cmds.h"
 
-	return -2;
-
 	#undef DEFCMD
+
+	return -2;
 }
 
 int CountStr(char * s, int len)
@@ -156,6 +154,7 @@ int CountStr(char * s, int len)
 		*point = '\0';
 		_count++;
 	}
+
 	return _count;
 }
 
@@ -177,5 +176,6 @@ int DivideStrs(char ** arr, const char * s, int lines, int slen)
 			ArrCount++;
 		}
 	}
+
 	return 0;
 }

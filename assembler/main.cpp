@@ -1,6 +1,5 @@
 #include "include.h"
 
-Label_t * AllLabels;
 char _FILE_[FILENAME_MAX] = "";
 
 int main()
@@ -11,7 +10,7 @@ int main()
 	char * FName    = NULL;
 	int  * WriteArr = NULL;
 
-	printf("My assembler compiler\nInput *.masm file name:\n");
+	printf("MyAssembler compiler\nInput *.masm file name:\n");
 	GetFName (&FName);
 
 	int _size = ReadAsm ( FName, &AsmTxt );
@@ -27,7 +26,7 @@ int main()
 	printf("Build Ok!\n");
 
 	free (AsmTxt);
-	free(WriteArr);
+	free (WriteArr);
 	free (FName);
 
 	system("pause"); 

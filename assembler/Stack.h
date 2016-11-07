@@ -41,6 +41,6 @@ bool Stack_OK     ( const Stack_t * );
 int  Stack_dump   ( const Stack_t *, const char * );
 int  Stack_push   ( Stack_t *, type );
 type Stack_pop    ( Stack_t * );
-int  Stack_find   (Stack_t *, const char *);
+int  Stack_find   ( const Stack_t *, const char * );
 
 #endif // STACK_H_INCLUDED
