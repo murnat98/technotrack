@@ -53,7 +53,7 @@ int Stack::dump(const std::string varName)
     dump << "{\n\tdata_[" << size_ << "] = [" << data_ << "]\n";
     dump << "\t{\n";
 
-	for (int i = 0; i < count_; i++)
+	for (int i = 0; i < size_; i++)
 	{
 		if (i < count_)
         {
